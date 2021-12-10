@@ -71,6 +71,7 @@ def obtain_autodeeplab_args():
     parser.add_argument('--out_path', type=str, default='', help="path to store output")
 
     # export format
+    parser.add_argument('--input_format', type=str, default='NHWC', help="input format of mindx sdk")
     parser.add_argument('--file_format', type=str, default='MINDIR')
 
     # ModelArts

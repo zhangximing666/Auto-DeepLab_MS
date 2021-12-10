@@ -19,6 +19,9 @@ import cv2
 
 import mindspore
 import mindspore.nn as nn
+import mindspore.numpy as msnp
+import mindspore.ops as ops
+from numpy.lib.function_base import flip
 
 
 def fast_hist(predict, label, n):
@@ -65,6 +68,29 @@ class BuildEvalNetwork(nn.Cell):
         """construct"""
         output = self.network(input_data)
         output = self.softmax(output)
+        return output
+
+
+class InferWithFlipNetwork(nn.Cell):
+    """InferWithFlipNetwork"""
+    def __init__(self, network, flip=True, input_format="NCHW"):
+        super(InferWithFlipNetwork, self).__init__()
+        self.eval_net = BuildEvalNetwork(network)
+        self.transpose = ops.Transpose()
+        self.flip = flip
+        self.format = input_format
+
+    def construct(self, input_data):
+        """construct"""
+        if self.format == "NHWC":
+            input_data = self.transpose(input_data, (0, 3, 1, 2))
+        output = self.eval_net(input_data)
+
+        if self.flip:
+            flip_input = msnp.flip(input_data, 3)
+            flip_output = self.eval_net(flip_input)
+            output += msnp.flip(flip_output, 3)
+        
         return output
 
 
