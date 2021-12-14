@@ -3,6 +3,13 @@
         "stream_config": {
             "deviceId": "0"
         },
+        "appsrc0": {
+            "props": {
+                "blocksize": "409600"
+            },
+            "factory": "appsrc",
+            "next": "mxpi_imagedecoder0"
+        },
         "mxpi_imagedecoder0": {
             "props": {
                 "handleMethod": "opencv"
@@ -12,8 +19,8 @@
         },
         "opencv_normalize0": {
             "props": {
-                "alpha": "103.53, 116.28, 123.675",
-                "beta": "57.375, 57.120, 58.395",
+                "alpha": "123.675, 116.28, 103.53",
+                "beta": "58.395, 57.12, 57.375",
                 "dataType": "FLOAT32"
             },
             "factory": "mxpi_imagenormalize",
@@ -22,7 +29,7 @@
         "mxpi_tensorinfer0": {
             "props": {
                 "dataSource": "mxpi_imageresize1",
-                "modelPath": "../models/deeplabv3_ms/deeplab_v3_s8_NHWC_bs1.om"
+                "modelPath": "/home/data/hit_mindx/zxm/Auto-DeepLab/infer/convert/Auto-DeepLab-s_NHWC.om"
             },
             "factory": "mxpi_modelinfer",
             "next": "mxpi_semanticsegpostprocessor0"
@@ -30,8 +37,8 @@
         "mxpi_semanticsegpostprocessor0": {
             "props": {
                 "dataSource": "mxpi_tensorinfer0",
-                "postProcessConfigPath": "../models/deeplabv3_ms/deeplabv3.cfg",
-                "labelPath": "../models/deeplabv3_ms/deeplabv3.names",
+                "postProcessConfigPath": "./autodeeplab.cfg",
+                "labelPath": "./autodeeplab.names",
                 "postProcessLibPath": "../../../lib/modelpostprocessors/libdeeplabv3post.so"
             },
             "factory": "mxpi_semanticsegpostprocessor",
@@ -43,13 +50,6 @@
             },
             "factory": "mxpi_dataserialize",
             "next": "appsink0"
-        },
-        "appsrc0": {
-            "props": {
-                "blocksize": "409600"
-            },
-            "factory": "appsrc",
-            "next": "mxpi_imagedecoder0"
         },
         "appsink0": {
             "props": {

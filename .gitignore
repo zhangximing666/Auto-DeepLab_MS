@@ -21,7 +21,7 @@ mindspore/lite/java/java/app/libs
 mindspore/lite/tools/converter/parser/tflite/schema_generated.h
 mindspore/lite/tools/converter/parser/caffe/caffe.pb.cc
 mindspore/lite/tools/converter/parser/caffe/caffe.pb.h
-mindspore/lite/tools/converter/parser/onnx/onnx.pb.h
+mindspore/lite/tools/converter/parser/onnx/onnx.pb.cc
 mindspore/lite/tools/converter/parser/onnx/onnx.pb.h
 mindspore/lite/tools/converter/schema/*.h
 mindspore/lite/tools/converter/schema/inner
@@ -107,3 +107,8 @@ mindspore/lite/test/do_test/
 
 # lite opencl compile file
 *.cl.inc
+
+# mindspore model
+*.ckpt
+*.air
+*.mindir
