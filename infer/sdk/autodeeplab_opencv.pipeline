@@ -28,7 +28,7 @@
         },
         "mxpi_tensorinfer0": {
             "props": {
-                "dataSource": "mxpi_imageresize1",
+                "dataSource": "opencv_normalize0",
                 "modelPath": "/home/data/hit_mindx/zxm/Auto-DeepLab/infer/convert/Auto-DeepLab-s_NHWC.om"
             },
             "factory": "mxpi_modelinfer",
@@ -39,7 +39,7 @@
                 "dataSource": "mxpi_tensorinfer0",
                 "postProcessConfigPath": "./autodeeplab.cfg",
                 "labelPath": "./autodeeplab.names",
-                "postProcessLibPath": "../../../lib/modelpostprocessors/libdeeplabv3post.so"
+                "postProcessLibPath": "/usr/local/sdk_home/mxManufacture/lib/modelpostprocessors/libdeeplabv3post.so"
             },
             "factory": "mxpi_semanticsegpostprocessor",
             "next": "mxpi_dataserialize0"

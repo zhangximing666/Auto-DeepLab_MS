@@ -9,7 +9,7 @@ from PIL import Image
 import numpy as np
 from StreamManagerApi import MxDataInput
 from StreamManagerApi import StreamManagerApi
-from utils.util import fast_hist, label_to_color_image
+from utils import fast_hist, label_to_color_image
 
 
 def sdk_args():
@@ -39,7 +39,6 @@ class CityscapesDataLoader(object):
         for root, _, files in os.walk(images_base):
             for filename in files:
                 if filename.endswith('.png'):
-                    print(root, filename)
                     self.img_path.append(root)
                     self.img_name.append(filename)
                     folder_name = root.split(os.sep)[-1]
@@ -50,6 +49,7 @@ class CityscapesDataLoader(object):
                     self.gtFiles.append(_gt)
         self.len = len(self.images)
         self.cur_index = 0
+        print(f"found {self.cur_index} images")
 
     def __len__(self):
         return self.len
@@ -71,7 +71,7 @@ class CityscapesDataLoader(object):
             'img': image,
             'gt': gtFine,
         }
-
+        self.cur_index += 1
         return dataItem
 
 
@@ -98,7 +98,7 @@ def _do_infer(stream_manager_api, data_input):
     if unique_id < 0:
         raise RuntimeError("Failed to send data to stream.")
 
-    timeout = 3000
+    timeout = 6000
     infer_result = stream_manager_api.GetResultWithUniqueId(
         stream_name, unique_id, timeout)
     if infer_result.errorCode != 0:
@@ -126,6 +126,7 @@ def main():
     dataset = CityscapesDataLoader(args.data_root)
     hist = np.zeros((args.num_classes, args.num_classes))
     for data_item in dataset:
+        print(f"start infer {data_item['file_name']}")
         data_input.data = data_item['img']
         gtFine = data_item['gt']
         pred = _do_infer(stream_manager_api, data_input)
@@ -134,15 +135,15 @@ def main():
         color_mask_res = label_to_color_image(pred)
 
         folder_path = os.path.join(args.result_path, data_item['file_path'].split(os.sep)[-1])
+        if not os.path.isdir(folder_path):
+            os.makedirs(folder_path)
         result_file = os.path.join(folder_path, data_item['file_name'].replace('leftImg8bit', 'pred_color'))
         color_mask_res.save(result_file)
     iou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
-    print("per-class IoU", iou)
-    print("mean IoU", np.nanmean(iou))
+    print("per-class IOU", iou)
+    print("mean IOU", np.nanmean(iou))
 
     stream_manager_api.DestroyAllStreams()
-
-
 
 
 if __name__ == "__main__":
