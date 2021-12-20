@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.14.0)
 project(autodeeplab)
-
 set(TARGET autodeeplab)
 
 add_definitions(-DENABLE_DVPP_INTERFACE)
-
-# Set namespace of glog from google to mindxsdk_private
-add_compile_options(-Dgoogle=mindxsdk_private)
-
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+add_definitions(-Dgoogle=mindxsdk_private)
 add_compile_options(-std=c++11 -fPIE -fstack-protector-all -fPIC -Wall)
 add_link_options(-Wl,-z,relro,-z,now,-z,noexecstack -s -pie)
+
 
 # Check environment variable
 if(NOT DEFINED ENV{ASCEND_HOME})
@@ -33,7 +31,7 @@ set(MXBASE_POST_PROCESS_DIR ${MXBASE_ROOT_DIR}/postprocess/include)
 if(DEFINED ENV{MXSDK_OPENSOURCE_DIR})
     set(OPENSOURCE_DIR $ENV{MXSDK_OPENSOURCE_DIR})
 else()
-    set(OPENSOURCE_DIR ${MXBASE_ROOT_DIR}/opensource/dist)
+    set(OPENSOURCE_DIR ${MXBASE_ROOT_DIR}/opensource)
 endif()
 
 include_directories(${ACL_INC_DIR})
