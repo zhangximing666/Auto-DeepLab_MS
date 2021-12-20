@@ -160,7 +160,7 @@ def train():
 
     model.train(epochs, train_ds, callbacks=cbs, dataset_sink_mode=True)
 
-    if args.modelArts:
+    if args.modelArts and device_id == 0:
         mox.file.copy_parallel(src_url="/cache/train", dst_url=args.train_url)
         mox.file.copy_parallel(src_url='/tmp', dst_url=args.train_url)
 
