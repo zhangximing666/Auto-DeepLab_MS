@@ -62,6 +62,7 @@ cmake-build-debug
 # Editor
 .vscode
 .idea/
+.vs/
 
 # Cquery
 .cquery_cached_index/

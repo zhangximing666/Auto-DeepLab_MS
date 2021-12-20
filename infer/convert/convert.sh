@@ -10,6 +10,7 @@ atc --framework=1 \
     --output="${OM_PATH}" \
     --input_format=NHWC \
     --input_shape="actual_input_1:1,1024,2048,3" \
+    --output_type=FP32 \
     --soc_version=Ascend310 \
     --op_select_implmode="high_precision"
 exit 0
