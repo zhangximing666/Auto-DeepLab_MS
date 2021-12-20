@@ -13,15 +13,17 @@
         "mxpi_imagedecoder0": {
             "props": {
                 "handleMethod": "opencv"
+                "outputDataFormat": "RGB"
             },
             "factory": "mxpi_imagedecoder",
             "next": "opencv_normalize0"
         },
         "opencv_normalize0": {
             "props": {
-                "alpha": "123.675, 116.28, 103.53",
-                "beta": "58.395, 57.12, 57.375",
+                "alpha": "103.53, 116.28, 123.675",
+                "beta": "57.375, 57.12, 58.395",
                 "dataType": "FLOAT32"
+                "format": "BGR888"
             },
             "factory": "mxpi_imagenormalize",
             "next": "mxpi_tensorinfer0"
@@ -29,7 +31,7 @@
         "mxpi_tensorinfer0": {
             "props": {
                 "dataSource": "opencv_normalize0",
-                "modelPath": "/home/data/hit_mindx/zxm/Auto-DeepLab/infer/convert/Auto-DeepLab-s_NHWC.om"
+                "modelPath": "/home/data/hit_mindx/zxm/Auto-DeepLab/infer/convert/Auto-DeepLab-s_NHWC_BGR.om"
             },
             "factory": "mxpi_modelinfer",
             "next": "mxpi_semanticsegpostprocessor0"
@@ -37,8 +39,8 @@
         "mxpi_semanticsegpostprocessor0": {
             "props": {
                 "dataSource": "mxpi_tensorinfer0",
-                "postProcessConfigPath": "./autodeeplab.cfg",
-                "labelPath": "./autodeeplab.names",
+                "postProcessConfigPath": "../model/autodeeplab.cfg",
+                "labelPath": "../model/autodeeplab.names",
                 "postProcessLibPath": "/usr/local/sdk_home/mxManufacture/lib/modelpostprocessors/libdeeplabv3post.so"
             },
             "factory": "mxpi_semanticsegpostprocessor",

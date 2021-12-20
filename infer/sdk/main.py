@@ -9,7 +9,7 @@ from PIL import Image
 import numpy as np
 from StreamManagerApi import MxDataInput
 from StreamManagerApi import StreamManagerApi
-from utils import fast_hist, label_to_color_image
+from utils import fast_hist, encode_segmap, label_to_color_image
 
 
 def sdk_args():
@@ -49,7 +49,7 @@ class CityscapesDataLoader(object):
                     self.gtFiles.append(_gt)
         self.len = len(self.images)
         self.cur_index = 0
-        print(f"found {self.cur_index} images")
+        print(f"Found {self.len} images")
 
     def __len__(self):
         return self.len
@@ -98,7 +98,7 @@ def _do_infer(stream_manager_api, data_input):
     if unique_id < 0:
         raise RuntimeError("Failed to send data to stream.")
 
-    timeout = 6000
+    timeout = 7000
     infer_result = stream_manager_api.GetResultWithUniqueId(
         stream_name, unique_id, timeout)
     if infer_result.errorCode != 0:
@@ -128,10 +128,10 @@ def main():
     for data_item in dataset:
         print(f"start infer {data_item['file_name']}")
         data_input.data = data_item['img']
-        gtFine = data_item['gt']
+        gtFine = encode_segmap(data_item['gt'], 255)
         pred = _do_infer(stream_manager_api, data_input)
 
-        hist += fast_hist(pred.flatten(), gtFine.flatten(), args.num_classes)
+        hist += fast_hist(pred.copy().flatten(), gtFine.flatten(), args.num_classes)
         color_mask_res = label_to_color_image(pred)
 
         folder_path = os.path.join(args.result_path, data_item['file_path'].split(os.sep)[-1])
@@ -139,9 +139,9 @@ def main():
             os.makedirs(folder_path)
         result_file = os.path.join(folder_path, data_item['file_name'].replace('leftImg8bit', 'pred_color'))
         color_mask_res.save(result_file)
-    iou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist))
+    iou = np.diag(hist) / (hist.sum(1) + hist.sum(0) - np.diag(hist) + 1e-10)
     print("per-class IOU", iou)
-    print("mean IOU", np.nanmean(iou))
+    print("mean IOU", round(np.nanmean(iou) * 100, 2))
 
     stream_manager_api.DestroyAllStreams()
 

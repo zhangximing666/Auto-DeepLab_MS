@@ -44,6 +44,23 @@ class CityscapesDataLoader(object):
         super(CityscapesDataLoader, self).__init__()
 
 
+def encode_segmap(lbl, ignore_label):
+    """encode segmap"""
+    mask = np.uint8(lbl)
+
+    num_classes = 19
+    void_classes = [0, 1, 2, 3, 4, 5, 6, 9, 10, 14, 15, 16, 18, 29, 30, -1]
+    valid_classes = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33]
+
+    class_map = dict(zip(valid_classes, range(num_classes)))
+    for _voidc in void_classes:
+        mask[mask == _voidc] = ignore_label
+    for _validc in valid_classes:
+        mask[mask == _validc] = class_map[_validc]
+
+    return mask
+
+
 def label_to_color_image(npimg) -> Image:
     img = Image.fromarray(npimg.astype('uint8'), "P")
     img.putpalette(cityspallete)
