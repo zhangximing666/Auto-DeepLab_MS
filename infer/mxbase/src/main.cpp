@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     initParam.classNum = CLASS_NUM;
     initParam.modelType = MODEL_TYPE;
     initParam.labelPath = "../models/autodeeplab.names";
-    initParam.modelPath = "../models/autodeeplab_s_NHWC_bs1.om";
+    initParam.modelPath = "../models/Auto-DeepLab-s_NHWC_BGR.om";
     initParam.checkModel = true;
     initParam.frameworkType = FRAMEWORK_TYPE;
 

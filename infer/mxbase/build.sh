@@ -23,6 +23,8 @@ function check_env()
     else
         echo "ARCH_PATTERN is set to ${ARCH_PATTERN} by user"
     fi
+
+    export LD_LIBRARY_PATH=${MX_SDK_HOME}/lib/modelpostprocessors:${LD_LIBRARY_PATH}
 }
 
 function build()

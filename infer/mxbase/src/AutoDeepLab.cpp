@@ -103,6 +103,17 @@ APP_ERROR AutoDeepLab::Normalize(const cv::Mat &srcImageMat, cv::Mat &dstImageMa
     return APP_ERR_OK;
 }
 
+APP_ERROR AutoDeepLab::GetResizeInfo(const cv::Mat &srcImageMat, MxBase::ResizedImageInfo &resizedImageInfo)
+{
+    resizedImageInfo.heightOriginal = srcImageMat.rows;
+    resizedImageInfo.heightResize = srcImageMat.rows;
+    resizedImageInfo.widthOriginal = srcImageMat.cols;
+    resizedImageInfo.widthResize = srcImageMat.cols;
+    resizedImageInfo.resizeType = RESIZER_MS_KEEP_ASPECT_RATIO;
+
+    return APP_ERR_OK;
+}
+
 APP_ERROR AutoDeepLab::CVMatToTensorBase(const cv::Mat &imageMat, MxBase::TensorBase &tensorBase)
 {
     const uint32_t dataSize = imageMat.cols * imageMat.rows * imageMat.elemSize();
@@ -170,6 +181,8 @@ APP_ERROR AutoDeepLab::Process(const std::string &imgPath)
         return ret;
     }
 
+    ResizedImageInfo resizedImageInfo;
+    GetResizeInfo(imageMat, resizedImageInfo);
     Normalize(imageMat, imageMat);
 
     TensorBase tensorBase;
@@ -189,7 +202,8 @@ APP_ERROR AutoDeepLab::Process(const std::string &imgPath)
     }
 
     std::vector<SemanticSegInfo> semanticSegInfos = {};
-    ret = PostProcess(outputs, semanticSegInfos);
+    std::vector<ResizedImageInfo> resizedImageInfos = {resizedImageInfo};
+    ret = PostProcess(outputs, semanticSegInfos, resizedImageInfos);
     if (ret != APP_ERR_OK) {
         LogError << "PostProcess failed, ret=" << ret << ".";
         return ret;
