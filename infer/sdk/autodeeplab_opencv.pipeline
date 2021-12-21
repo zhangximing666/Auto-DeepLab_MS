@@ -12,7 +12,7 @@
         },
         "mxpi_imagedecoder0": {
             "props": {
-                "handleMethod": "opencv"
+                "handleMethod": "opencv",
                 "outputDataFormat": "RGB"
             },
             "factory": "mxpi_imagedecoder",
@@ -22,7 +22,7 @@
             "props": {
                 "alpha": "103.53, 116.28, 123.675",
                 "beta": "57.375, 57.12, 58.395",
-                "dataType": "FLOAT32"
+                "dataType": "FLOAT32",
                 "format": "BGR888"
             },
             "factory": "mxpi_imagenormalize",
@@ -31,7 +31,7 @@
         "mxpi_tensorinfer0": {
             "props": {
                 "dataSource": "opencv_normalize0",
-                "modelPath": "/home/data/hit_mindx/zxm/Auto-DeepLab/infer/convert/Auto-DeepLab-s_NHWC_BGR.om"
+                "modelPath": "../model/Auto-DeepLab-s_NHWC_BGR.om"
             },
             "factory": "mxpi_modelinfer",
             "next": "mxpi_semanticsegpostprocessor0"
