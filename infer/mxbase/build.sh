@@ -31,6 +31,7 @@ function build()
 {
     rm -rf build
     mkdir -p build
+    mkdir -p MxBase_Result
     cd build || exit
 
     if ! cmake ..;
@@ -45,12 +46,6 @@ function build()
       return 1
     fi
 
-#    ret=$?
-#    if [ ${ret} -ne 0 ]; then
-#        echo "Failed to build."
-#        exit ${ret}
-#    fi
-    # make install
     cd - || exit
     return 0
 }

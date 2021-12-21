@@ -22,10 +22,29 @@ namespace {
     const uint32_t FRAMEWORK_TYPE = 2;
 }
 
+void ShowUsage() {
+    LogWarn << "Usage   : ./build/autodeeplab <--image or --dir> [Option]" << std::endl;
+    LogWarn << "Options :" << std::endl;
+    LogWarn << " --image infer_image_path    the path of single infer image, such as "
+               "./build/autodeeplab --image /PATH/TO/cityscapes/test.jpg." << std::endl;
+    LogWarn << " --dir infer_image_dir       the dir of batch infer images, such as "
+               "./build/autodeeplab --dir /PATH/TO/cityscapes/leftImg8bit/val." << std::endl;
+    return;
+}
+
 int main(int argc, char *argv[])
 {
-    if (argc <= 1) {
-        LogWarn << "Please input image path, such as './autodeeplab test.jpg'.";
+    if (argc < 3) {
+        LogWarn << "Please use as follows." << std::endl;
+        ShowUsage();
+        return APP_ERR_OK;
+    }
+
+    std::string option = argv[1];
+    std::string imgPath = argv[2];
+    if (option != "--image" && option != "--dir") {
+        LogInfo << "Please use as follows." << std::endl;
+        ShowUsage();
         return APP_ERR_OK;
     }
 
@@ -33,8 +52,8 @@ int main(int argc, char *argv[])
     initParam.deviceId = 0;
     initParam.classNum = CLASS_NUM;
     initParam.modelType = MODEL_TYPE;
-    initParam.labelPath = "../models/autodeeplab.names";
-    initParam.modelPath = "../models/Auto-DeepLab-s_NHWC_BGR.om";
+    initParam.labelPath = "../model/autodeeplab.names";
+    initParam.modelPath = "../model/Auto-DeepLab-s_NHWC_BGR.om";
     initParam.checkModel = true;
     initParam.frameworkType = FRAMEWORK_TYPE;
 
@@ -45,13 +64,29 @@ int main(int argc, char *argv[])
         return ret;
     }
 
-    std::string imgPath = argv[1];
-    ret = model.Process(imgPath);
+    std::vector<std::string> imagesPath;
+    if (option == "--image") {
+        imagesPath.emplace_back(imgPath);
+    } else {
+        ret = GetAllImages(imgPath, &imagesPath);
+    }
+
     if (ret != APP_ERR_OK) {
-        LogError << "AutoDeepLab process failed, ret=" << ret << ".";
-        model.DeInit();
+        LogError << "read file failed, ret=" << ret << ".";
         return ret;
     }
+    LogInfo << "read file success.";
+
+    for (auto path : imagesPath) {
+        LogInfo << "read image path " << path;
+        ret = model.Process(path);
+        if (ret != APP_ERR_OK) {
+            LogError << "AutoDeepLab process failed, ret=" << ret << ".";
+            model.DeInit();
+            return ret;
+        }
+    }
+
     model.DeInit();
     return APP_ERR_OK;
 }

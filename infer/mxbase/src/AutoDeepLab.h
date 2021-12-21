@@ -16,6 +16,8 @@
 #ifndef AUTODEEPLAB_H
 #define AUTODEEPLAB_H
 
+#include <sys/stat.h>
+#include <dirent.h>
 #include <opencv2/opencv.hpp>
 
 #include "MxBase/DvppWrapper/DvppWrapper.h"
@@ -56,4 +58,7 @@ private:
     uint32_t deviceId_ = 0;
 };
 
+APP_ERROR GetAllImages(const std::string &dirName, std::vector<std::string> *ImagesPath);
+DIR *OpenDir(const std::string &dirName);
+std::string RealPath(const std::string &path);
 #endif

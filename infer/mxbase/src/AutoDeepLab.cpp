@@ -14,6 +14,8 @@
  */
 
 #include "AutoDeepLab.h"
+#include <fstream>
+#include <iostream>
 #include <algorithm>
 #include <vector>
 #include "MxBase/DeviceManager/DeviceManager.h"
@@ -218,6 +220,11 @@ APP_ERROR AutoDeepLab::Process(const std::string &imgPath)
 
 APP_ERROR AutoDeepLab::SaveResultToImage(const MxBase::SemanticSegInfo &segInfo, const std::string &filePath)
 {
+    std::string homePath = "./MxBase_Result";
+    int pos = filePath.rfind('/');
+    std::string fileName(filePath, pos + 1);
+    std::string outFileName = homePath + "/" + fileName;
+
     cv::Mat imageMat(segInfo.pixels.size(), segInfo.pixels[0].size(), CV_8UC1);
     for (size_t x = 0; x < segInfo.pixels.size(); ++x) {
         for (size_t y = 0; y < segInfo.pixels[x].size(); ++y) {
@@ -226,6 +233,80 @@ APP_ERROR AutoDeepLab::SaveResultToImage(const MxBase::SemanticSegInfo &segInfo,
         }
     }
 
-    cv::imwrite(filePath, imageMat);
+    cv::imwrite(outFileName, imageMat);
     return APP_ERR_OK;
+}
+
+DIR *OpenDir(const std::string &dirName) {
+    if (dirName.empty()) {
+        std::cout << " dirName is null ! " << std::endl;
+        return nullptr;
+    }
+    std::string realPath = RealPath(dirName);
+    struct stat s;
+    lstat(realPath.c_str(), &s);
+    if (!S_ISDIR(s.st_mode)) {
+        std::cout << "dirName is not a valid directory !" << std::endl;
+        return nullptr;
+    }
+    DIR *dir = opendir(realPath.c_str());
+    if (dir == nullptr) {
+        std::cout << "Can not open dir " << dirName << std::endl;
+        return nullptr;
+    }
+    std::cout << "Successfully opened the dir " << dirName << std::endl;
+    return dir;
+}
+
+
+APP_ERROR GetAllImages(const std::string& dirName, std::vector<std::string> *ImagesPath) {
+    struct dirent *filename;
+    DIR *dir = OpenDir(dirName);
+    if (dir == nullptr) {
+        return {};
+    }
+    std::vector<std::string> dirs;
+//    std::vector<std::string> files;
+    while ((filename = readdir(dir)) != nullptr) {
+        std::string dName = std::string(filename->d_name);
+        if (dName == "." || dName == "..") {
+            continue;
+        } else if (filename->d_type == DT_DIR) {
+            dirs.emplace_back(std::string(dirName) + "/" + filename->d_name);
+        } else if (filename->d_type == DT_REG) {
+            (*ImagesPath).emplace_back(std::string(dirName) + "/" + filename->d_name);
+        } else {
+            continue;
+        }
+    }
+
+    for (auto d : dirs) {
+        dir = OpenDir(d);
+        while ((filename = readdir(dir)) != nullptr) {
+            std::string dName = std::string(filename->d_name);
+            if (dName == "." || dName == ".." || filename->d_type != DT_REG) {
+                continue;
+            }
+            (*ImagesPath).emplace_back(std::string(d) + "/" + filename->d_name);
+        }
+    }
+    std::sort((*ImagesPath).begin(), (*ImagesPath).end());
+    for (auto &f : (*ImagesPath)) {
+        std::cout << "image file: " << f << std::endl;
+    }
+    return APP_ERR_OK;
+}
+
+std::string RealPath(const std::string &path) {
+    char realPathMem[PATH_MAX] = {0};
+    char *realPathRet = nullptr;
+    realPathRet = realpath(path.data(), realPathMem);
+    if (realPathRet == nullptr) {
+        std::cout << "File: " << path << " is not exist.";
+        return "";
+    }
+
+    std::string realPath(realPathMem);
+    std::cout << path << " realpath is: " << realPath << std::endl;
+    return realPath;
 }
