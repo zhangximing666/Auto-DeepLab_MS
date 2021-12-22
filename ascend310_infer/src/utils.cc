@@ -62,7 +62,7 @@ std::vector<std::string> GetAllFiles(std::string_view dirName) {
     return files;
 }
 
-int WriteResult(const std::string& imageFile, const std::vector<MSTensor> &outputs) {
+int WriteResult(const std::string &imageFile, const std::vector<MSTensor> &outputs) {
     std::string homePath = "./result_Files";
     for (size_t i = 0; i < outputs.size(); ++i) {
         size_t outputSize;

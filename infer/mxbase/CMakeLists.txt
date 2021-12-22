@@ -47,7 +47,7 @@ link_directories(${OPENSOURCE_DIR}/lib)
 link_directories(${MXBASE_LIB_DIR})
 link_directories(${MXBASE_POST_LIB_DIR})
 
-add_executable(${TARGET} src/main.cpp src/AutoDeepLab.cpp)
+add_executable(${TARGET} src/main.cc src/AutoDeepLab.cc)
 target_link_libraries(${TARGET} glog cpprest mxbase deeplabv3post opencv_world)
 
 install(TARGETS ${TARGET} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/)
