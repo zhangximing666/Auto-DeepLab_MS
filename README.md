@@ -409,7 +409,7 @@ be 16 or larger. Simply, we set batch size = 16 and Epoch 1300, 2700, 4000 corre
 
 ### BibTeX
 
-'''bibtex
+```bibtex
 @misc{Autodeeplab_MS,
   title={Auto-Deeplab_MS},
   author={Zhang Ximing},
@@ -418,4 +418,4 @@ be 16 or larger. Simply, we set batch size = 16 and Epoch 1300, 2700, 4000 corre
   journal={GitHub repository}},
   howpublished{\url{https://github.com/zhangximing666/Auto-DeepLab_MS}}
 }
-'''
+```
