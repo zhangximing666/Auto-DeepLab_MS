@@ -405,6 +405,17 @@ be 16 or larger. Simply, we set batch size = 16 and Epoch 1300, 2700, 4000 corre
 | Dataset                    | Cityscapes (full image 1024*2048)    |
 | Speed                      | 1677.48 ms/img                       |
 
-# [ModelZoo Homepage](#contents)
+## Citing
 
-Please check the official [homepage](https://gitee.com/mindspore/models).
+### BibTeX
+
+'''bibtex
+@misc{Autodeeplab_MS,
+  title={Auto-Deeplab_MS},
+  author={Zhang Ximing},
+  year={2021},
+  publisher={GitHub},
+  journal={GitHub repository}},
+  howpublished{\url{https://github.com/zhangximing666/Auto-DeepLab_MS}}
+}
+'''
