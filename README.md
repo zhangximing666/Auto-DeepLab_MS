@@ -28,7 +28,7 @@
         - [Training Accuracy](#training-accuracy)
         - [Distributed Training Performance](#distributed-training-performance)
         - [Inference Performance on Ascend310](#inference-performance-on-ascend310)
-- [ModelZoo Homepage](#modelzoo-homepage)
+- [Citing](#citing)
 
 # [Auto-DeepLab Description](#contents)
 
@@ -405,7 +405,7 @@ be 16 or larger. Simply, we set batch size = 16 and Epoch 1300, 2700, 4000 corre
 | Dataset                    | Cityscapes (full image 1024*2048)    |
 | Speed                      | 1677.48 ms/img                       |
 
-## Citing
+## [Citing](#contents)
 
 ### BibTeX
 
